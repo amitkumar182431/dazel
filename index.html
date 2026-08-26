@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dazel — Jewelry That Speaks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --burgundy: #5C1330;
+    --burgundy-dark: #370A1D;
+    --burgundy-deeper: #250613;
+    --gold: #C9A24B;
+    --gold-light: #E7CD8C;
+    --cream: #FBF3EA;
+    --blush: #F3E1E1;
+    --ink: #2B1420;
+    --ink-soft: #6b4a56;
+    --line: rgba(92,19,48,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Jost', sans-serif;
+    background:
+      radial-gradient(ellipse 600px 400px at 12% 0%, rgba(201,162,75,.07), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 20%, rgba(92,19,48,.05), transparent 55%),
+      var(--cream);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  body.loaded{animation:pageIn .7s ease both;}
+  @keyframes pageIn{from{opacity:0;} to{opacity:1;}}
+
+  /* ---------- scroll reveal ---------- */
+  .reveal{opacity:0; transform:translateY(28px); transition:opacity .8s cubic-bezier(.2,.7,.3,1), transform .8s cubic-bezier(.2,.7,.3,1);}
+  .reveal.in{opacity:1; transform:translateY(0);}
+  .reveal-stagger.in > *{animation:staggerUp .7s cubic-bezier(.2,.7,.3,1) both;}
+  .reveal-stagger.in > *:nth-child(1){animation-delay:.02s;}
+  .reveal-stagger.in > *:nth-child(2){animation-delay:.1s;}
+  .reveal-stagger.in > *:nth-child(3){animation-delay:.18s;}
+  .reveal-stagger.in > *:nth-child(4){animation-delay:.26s;}
+  .reveal-stagger.in > *:nth-child(5){animation-delay:.34s;}
+  .reveal-stagger.in > *:nth-child(6){animation-delay:.42s;}
+  @keyframes staggerUp{from{opacity:0; transform:translateY(24px);} to{opacity:1; transform:translateY(0);}}
+  h1,h2,h3,.serif{font-family:'Playfair Display', serif;}
+  a{text-decoration:none; color:inherit;}
+  img{max-width:55%; display:block;}
+  ul{list-style:none;}
+  .wrap{max-width:1200px; margin:0 auto; padding:0 32px;}
+  ::selection{background:var(--gold-light); color:var(--burgundy-dark);}
+
+  /* ---------- ornamental divider (signature element) ---------- */
+  .motif{display:flex; align-items:center; justify-content:center; gap:14px; margin:0 auto;}
+  .motif svg{display:block; animation:sparklePulse 3.4s ease-in-out infinite;}
+  .motif .rule{flex:0 0 auto; width:64px; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent);}
+  @keyframes sparklePulse{0%,100%{opacity:.65; transform:scale(1) rotate(0deg);} 50%{opacity:1; transform:scale(1.18) rotate(20deg);}}
+
+  /* ---------- announcement bar ---------- */
+  .announce{
+    background:var(--burgundy-deeper); color:var(--gold-light);
+    font-size:12.5px; letter-spacing:.14em; text-transform:uppercase;
+    padding:9px 0; overflow:hidden; white-space:nowrap; border-bottom:1px solid rgba(201,162,75,.25);
+  }
+  .announce-track{display:inline-flex; animation:scroll 26s linear infinite;}
+  .announce-track span{padding:0 28px; opacity:.92;}
+  @keyframes scroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(251,243,234,0.92); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; padding:18px 32px; max-width:1200px; margin:0 auto;}
+  .logo{font-family:'Playfair Display',serif; font-weight:700; font-size:26px; letter-spacing:.06em; color:var(--burgundy); display:flex; align-items:center; gap:8px; transition:transform .3s ease;}
+  .logo:hover{transform:scale(1.03);}
+  .logo em{font-style:normal; color:var(--gold);}
+  .logo-img{height:44px; width:auto; display:block;}
+  nav.links{display:flex; gap:30px; font-size:13px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink);}
+  nav.links a{position:relative; padding-bottom:4px; transition:color .2s;}
+  nav.links a::after{content:''; position:absolute; left:0; bottom:0; height:1px; width:0; background:var(--gold); transition:width .25s ease;}
+  nav.links a:hover{color:var(--burgundy);}
+  nav.links a:hover::after{width:100%;}
+  .nav-icons{display:flex; align-items:center; gap:14px;}
+  .nav-icons button{background:none; border:none; cursor:pointer; color:var(--burgundy); position:relative; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:background .2s ease, transform .2s ease;}
+  .nav-icons button:hover{background:var(--blush); transform:translateY(-1px);}
+  .cart-count{position:absolute; top:2px; right:2px; background:var(--burgundy); color:var(--cream); font-size:9.5px; font-weight:600; border-radius:50%; width:16px; height:16px; display:inline-flex; align-items:center; justify-content:center;}
+  .account-btn{position:relative;}
+  .gift-ping{position:absolute; top:-2px; right:-2px; width:9px; height:9px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 rgba(201,162,75,.6); animation:ping 2.2s ease-out infinite;}
+  @keyframes ping{0%{box-shadow:0 0 0 0 rgba(201,162,75,.55);} 70%{box-shadow:0 0 0 8px rgba(201,162,75,0);} 100%{box-shadow:0 0 0 0 rgba(201,162,75,0);}}
+  .menu-toggle{display:none; background:none; border:none; cursor:pointer;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative; min-height:88vh; display:flex; align-items:center;
+    background:
+      radial-gradient(ellipse at 78% 20%, rgba(201,162,75,.16), transparent 55%),
+      linear-gradient(155deg, var(--burgundy-dark) 0%, var(--burgundy) 55%, #4a1027 100%);
+    overflow:hidden;
+  }
+  .hero::before{
+    content:''; position:absolute; inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 20% 30%, rgba(231,205,140,.5) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 65% 15%, rgba(231,205,140,.4) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 85% 60%, rgba(231,205,140,.35) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 40% 80%, rgba(231,205,140,.3) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 10% 65%, rgba(231,205,140,.4) 50%, transparent 51%);
+    pointer-events:none;
+  }
+  .hero-inner{max-width:1200px; margin:0 auto; padding:60px 32px; display:grid; grid-template-columns:1.1fr .9fr; gap:40px; align-items:center; width:100%; position:relative; z-index:2;}
+  .eyebrow{color:var(--gold-light); text-transform:uppercase; letter-spacing:.24em; font-size:12px; display:flex; align-items:center; gap:12px; margin-bottom:22px;}
+  .eyebrow .ln{width:32px; height:1px; background:var(--gold-light);}
+  .hero h1{color:var(--cream); font-size:clamp(40px,5.4vw,68px); line-height:1.05; font-weight:600; max-width:620px;}
+  .hero h1 i{
+    font-style:italic; font-weight:500; background:linear-gradient(100deg, var(--gold-light) 20%, #fff 45%, var(--gold-light) 70%);
+    background-size:220% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:shimmer 5s linear infinite;
+  }
+  @keyframes shimmer{to{background-position:-220% center;}}
+  .hero p{color:rgba(251,243,234,.78); font-size:16.5px; line-height:1.7; margin:24px 0 34px; max-width:440px;}
+  .btn-row{display:flex; gap:18px; align-items:center; flex-wrap:wrap;}
+  .btn{
+    display:inline-flex; align-items:center; gap:10px; padding:15px 30px; font-size:13px;
+    letter-spacing:.12em; text-transform:uppercase; border-radius:2px; cursor:pointer; transition:all .25s ease; border:1px solid transparent;
+  }
+  .btn-gold{background:var(--gold); color:var(--burgundy-deeper); font-weight:600;}
+  .btn-gold:hover{background:var(--gold-light); transform:translateY(-2px); box-shadow:0 12px 24px rgba(201,162,75,.25);}
+  .btn-outline{border-color:rgba(251,243,234,.4); color:var(--cream);}
+  .btn-outline:hover{border-color:var(--gold-light); color:var(--gold-light);}
+
+  .hero-visual{position:relative; display:flex; align-items:center; justify-content:center;}
+  .hero-visual .ring{
+    position:absolute; width:min(430px,95%); aspect-ratio:1/1; border-radius:50%;
+    border:1px dashed rgba(231,205,140,.35); animation:spin 40s linear infinite;
+  }
+  .hero-visual .ring.r2{width:min(500px,105%); border-color:rgba(231,205,140,.16); animation-duration:60s; animation-direction:reverse;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .hero-visual .glow{position:absolute; width:340px; height:340px; border-radius:50%; background:radial-gradient(circle, rgba(201,162,75,.28), transparent 70%); filter:blur(10px); animation:glowPulse 4s ease-in-out infinite;}
+  @keyframes glowPulse{0%,100%{opacity:.6; transform:scale(1);} 50%{opacity:1; transform:scale(1.08);}}
+  .hero-visual .plate{
+    width:min(380px,90%); aspect-ratio:1/1.05; border-radius:6px;
+    background:linear-gradient(160deg, rgba(251,243,234,.08), rgba(251,243,234,.02));
+    border:1px solid rgba(231,205,140,.28); position:relative; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 40px 80px rgba(0,0,0,.35); animation:floatPlate 5s ease-in-out infinite;
+  }
+  @keyframes floatPlate{0%,100%{transform:translateY(0);} 50%{transform:translateY(-12px);}}
+  .hero-visual .plate::before, .hero-visual .plate::after{
+    content:''; position:absolute; border:1px solid rgba(231,205,140,.22); inset:14px; border-radius:4px;
+  }
+  .hero-visual .plate svg path, .hero-visual .plate svg circle{animation:shineStroke 3s ease-in-out infinite;}
+  @keyframes shineStroke{0%,100%{stroke:#E7CD8C;} 50%{stroke:#fff;}}
+  .float-tag{
+    position:absolute; background:var(--cream); color:var(--burgundy); padding:10px 16px; border-radius:2px;
+    font-size:12px; letter-spacing:.08em; text-transform:uppercase; box-shadow:0 14px 30px rgba(0,0,0,.28); display:flex; align-items:center; gap:8px;
+  }
+  .float-tag.a{top:6%; left:-6%; animation:float1 6s ease-in-out infinite;}
+  .float-tag.b{bottom:10%; right:-8%; animation:float2 7s ease-in-out infinite;}
+  @keyframes float1{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  @keyframes float2{0%,100%{transform:translateY(0);}50%{transform:translateY(12px);}}
+
+  /* ---------- section shared ---------- */
+  section{padding:100px 0;}
+  .section-head{text-align:center; max-width:620px; margin:0 auto 56px;}
+  .section-head .kicker{color:var(--gold); text-transform:uppercase; letter-spacing:.22em; font-size:12px; font-weight:600; margin-bottom:14px;}
+  .section-head h2{font-size:clamp(30px,3.6vw,44px); color:var(--burgundy-dark); font-weight:600; margin-bottom:16px;}
+  .section-head p{color:var(--ink-soft); font-size:15.5px; line-height:1.7;}
+
+  /* ---------- category strip ---------- */
+  .cat-strip{background:var(--blush);}
+  .cat-grid{display:grid; grid-template-columns:repeat(6,1fr); gap:20px;}
+  .cat-card{
+    background:var(--cream); border-radius:6px; padding:28px 14px; text-align:center; cursor:pointer;
+    border:1px solid transparent; transition:all .3s ease;
+  }
+  .cat-card:hover{border-color:var(--gold); transform:translateY(-6px); box-shadow:0 18px 30px rgba(92,19,48,.1);}
+  .cat-card .icon{width:52px; height:52px; margin:0 auto 14px; color:var(--burgundy);}
+  .cat-card span{font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink); font-weight:500;}
+
+  /* ---------- product grid ---------- */
+  .product-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:28px;}
+  .card{
+    background:#fff; border-radius:8px; overflow:hidden; position:relative;
+    border:1px solid var(--line); transition:transform .35s cubic-bezier(.2,.7,.3,1), box-shadow .35s ease, border-color .35s ease;
+  }
+  .card:hover{transform:translateY(-10px); box-shadow:0 30px 50px rgba(92,19,48,.18); border-color:rgba(201,162,75,.4);}
+  .card .thumb{
+    aspect-ratio:1/1.05; position:relative; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(155deg, var(--blush), #fff 70%); overflow:hidden;
+  }
+  .card .thumb::after{
+    content:''; position:absolute; top:0; left:-140%; width:60%; height:100%;
+    background:linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+    transform:skewX(-20deg); transition:left .7s ease;
+  }
+  .card:hover .thumb::after{left:140%;}
+  .card .thumb svg{width:56%; height:56%; color:var(--burgundy); opacity:.88; transition:transform .5s cubic-bezier(.2,.7,.3,1);}
+  .card:hover .thumb svg{transform:scale(1.1) rotate(-3deg);}
+  .badge{position:absolute; top:14px; left:14px; background:var(--burgundy); color:var(--gold-light); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; padding:5px 10px; border-radius:2px;}
+  .wish{position:absolute; top:12px; right:12px; width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.85); display:flex; align-items:center; justify-content:center; color:var(--burgundy); cursor:pointer; transition:.2s;}
+  .wish:hover{background:var(--burgundy); color:#fff;}
+  .card .info{padding:18px 18px 22px;}
+  .card .info .cname{font-family:'Playfair Display',serif; font-size:16.5px; font-weight:600; color:var(--ink); margin-bottom:6px; line-height:1.35;}
+  .card .info .price{display:flex; align-items:baseline; gap:10px; margin-top:10px;}
+  .price .now{color:var(--burgundy); font-weight:600; font-size:16px;}
+  .price .was{color:#a58b93; text-decoration:line-through; font-size:13px;}
+  .price .off{color:#3d7a4f; font-size:12px; font-weight:500;}
+  .view-all-row{text-align:center; margin-top:48px;}
+  .view-all{border:1px solid var(--burgundy); color:var(--burgundy); padding:13px 32px; font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; border-radius:2px; transition:.25s;}
+  .view-all:hover{background:var(--burgundy); color:#fff;}
+
+  /* ---------- banner ---------- */
+  .promo{
+    background:linear-gradient(120deg, var(--burgundy-dark), var(--burgundy) 60%, #4a1027);
+    color:var(--cream); border-radius:10px; padding:56px 48px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap;
+    position:relative; overflow:hidden;
+  }
+  .promo::after{content:''; position:absolute; right:-60px; top:-60px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle, rgba(231,205,140,.16), transparent 70%);}
+  .promo h3{font-size:clamp(24px,3vw,34px); max-width:480px; position:relative; z-index:1;}
+  .promo p{color:var(--gold-light); margin-top:10px; font-size:14px; letter-spacing:.06em; position:relative; z-index:1;}
+
+  /* ---------- testimonials ---------- */
+  .testi-strip{background:var(--burgundy-deeper);}
+  .testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:26px;}
+  .testi-card{background:rgba(251,243,234,.04); border:1px solid rgba(231,205,140,.18); border-radius:8px; padding:32px 28px;}
+  .stars{color:var(--gold); letter-spacing:3px; margin-bottom:16px; font-size:14px;}
+  .testi-card p.quote{color:rgba(251,243,234,.85); font-size:14.5px; line-height:1.75; margin-bottom:22px; min-height:95px;}
+  .testi-who{display:flex; align-items:center; gap:12px;}
+  .avatar{width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--burgundy)); flex-shrink:0;}
+  .testi-who .name{color:var(--cream); font-size:13.5px; font-weight:500;}
+  .testi-who .place{color:var(--gold-light); font-size:11.5px; opacity:.75;}
+  .testi-strip .section-head h2{color:var(--cream);}
+  .testi-strip .section-head p{color:rgba(251,243,234,.65);}
+
+  /* ---------- footer ---------- */
+  footer{background:var(--burgundy-dark); color:rgba(251,243,234,.75); padding:80px 0 26px;}
+  .foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1.2fr; gap:40px; padding-bottom:52px; border-bottom:1px solid rgba(231,205,140,.14);}
+  .foot-logo{font-family:'Playfair Display',serif; font-size:24px; color:var(--cream); font-weight:700; margin-bottom:14px;}
+  .foot-logo em{font-style:normal; color:var(--gold);}
+  footer p.tag{font-size:13.5px; line-height:1.75; max-width:280px; opacity:.8;}
+  footer h4{color:var(--gold-light); font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:18px;}
+  footer ul li{margin-bottom:11px; font-size:13.5px;}
+  footer ul li a{opacity:.82; transition:.2s;}
+  footer ul li a:hover{opacity:1; color:var(--gold-light);}
+  .social-row{display:flex; gap:12px; margin-top:18px;}
+  .social-row a{width:36px; height:36px; border:1px solid rgba(231,205,140,.3); border-radius:50%; display:flex; align-items:center; justify-content:center; transition:.2s;}
+  .social-row a:hover{background:var(--gold); color:var(--burgundy-dark); border-color:var(--gold);}
+  .bottom-bar{display:flex; justify-content:space-between; align-items:center; padding-top:24px; font-size:12px; opacity:.6; flex-wrap:wrap; gap:10px;}
+
+  /* ---------- auth modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(37,6,19,.55); backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center; z-index:200; padding:20px;
+    opacity:0; pointer-events:none; transition:opacity .35s ease;
+  }
+  .modal-overlay.open{opacity:1; pointer-events:auto;}
+  .auth-modal{
+    display:grid; grid-template-columns:1fr 1fr; width:min(880px,100%); max-height:92vh; border-radius:14px; overflow:hidden;
+    background:#fff; box-shadow:0 50px 90px rgba(37,6,19,.4);
+    transform:scale(.92) translateY(16px); opacity:0; transition:transform .4s cubic-bezier(.2,.8,.3,1), opacity .4s ease;
+  }
+  .modal-overlay.open .auth-modal{transform:scale(1) translateY(0); opacity:1;}
+
+  .auth-visual{
+    position:relative; background:linear-gradient(160deg, var(--burgundy-dark), var(--burgundy) 55%, #4a1027);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 32px; overflow:hidden;
+  }
+  .auth-visual::before{
+    content:''; position:absolute; inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 15% 25%, rgba(231,205,140,.55) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 75% 15%, rgba(231,205,140,.4) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 85% 70%, rgba(231,205,140,.4) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 30% 82%, rgba(231,205,140,.3) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 55% 45%, rgba(231,205,140,.25) 50%, transparent 51%);
+  }
+  .auth-visual .glow-behind{position:absolute; width:280px; height:280px; border-radius:50%; background:radial-gradient(circle, rgba(201,162,75,.35), transparent 70%); filter:blur(6px); animation:glowPulse 3.2s ease-in-out infinite;}
+  .auth-visual h3{color:var(--cream); font-size:23px; text-align:center; margin-top:10px; position:relative; z-index:2;}
+  .auth-visual p{color:var(--gold-light); font-size:13px; text-align:center; margin-top:8px; max-width:220px; line-height:1.6; opacity:.9; position:relative; z-index:2;}
+
+  /* gift box svg animation */
+  .gift-stage{position:relative; width:180px; height:180px; z-index:2;}
+  .gift-stage svg{width:100%; height:100%; overflow:visible;}
+  .gift-lid{transform-origin:50px 78px; animation:liftLid 2.6s ease-in-out infinite;}
+  @keyframes liftLid{
+    0%,20%{transform:translateY(0) rotate(0deg);}
+    38%,55%{transform:translateY(-16px) rotate(-8deg);}
+    75%,100%{transform:translateY(0) rotate(0deg);}
+  }
+  .gift-bow{transform-origin:50px 70px; animation:bowPop 2.6s ease-in-out infinite;}
+  @keyframes bowPop{
+    0%,20%{transform:scale(1) translateY(0);}
+    40%{transform:scale(1.12) translateY(-18px);}
+    55%{transform:scale(1.05) translateY(-15px);}
+    75%,100%{transform:scale(1) translateY(0);}
+  }
+  .gift-box-base{animation:boxSettle 2.6s ease-in-out infinite;}
+  @keyframes boxSettle{0%,20%{transform:translateY(0);} 40%,55%{transform:translateY(2px);} 75%,100%{transform:translateY(0);}}
+  .spark{opacity:0; transform-origin:center; animation:sparkPop 2.6s ease-in-out infinite;}
+  .spark.s1{animation-delay:.15s;} .spark.s2{animation-delay:.32s;} .spark.s3{animation-delay:.05s;}
+  .spark.s4{animation-delay:.4s;} .spark.s5{animation-delay:.22s;} .spark.s6{animation-delay:.1s;}
+  @keyframes sparkPop{
+    0%,32%{opacity:0; transform:scale(.2) translateY(0);}
+    48%{opacity:1; transform:scale(1) translateY(-14px);}
+    70%{opacity:0; transform:scale(.5) translateY(-28px);}
+    100%{opacity:0;}
+  }
+
+  .auth-panel{padding:44px 40px; display:flex; flex-direction:column; overflow-y:auto;}
+  .auth-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:26px;}
+  .auth-top .auth-logo{font-family:'Playfair Display',serif; font-weight:700; font-size:21px; color:var(--burgundy);}
+  .auth-top .auth-logo em{font-style:normal; color:var(--gold);}
+  .modal-close{background:none; border:none; cursor:pointer; color:var(--ink-soft); width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:.2s;}
+  .modal-close:hover{background:var(--blush); color:var(--burgundy);}
+
+  .auth-tabs{display:flex; background:var(--blush); border-radius:30px; padding:4px; margin-bottom:28px;}
+  .auth-tab{flex:1; text-align:center; padding:10px 0; font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; border-radius:26px; cursor:pointer; color:var(--ink-soft); transition:all .3s ease; border:none; background:none; font-family:'Jost',sans-serif;}
+  .auth-tab.active{background:var(--burgundy); color:var(--cream); font-weight:500; box-shadow:0 8px 16px rgba(92,19,48,.25);}
+
+  .auth-field{margin-bottom:18px;}
+  .auth-field label{display:block; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:8px;}
+  .auth-field input{
+    width:100%; padding:13px 16px; border:1px solid var(--line); border-radius:6px; font-family:'Jost',sans-serif;
+    font-size:14px; color:var(--ink); background:var(--cream); transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .auth-field input:focus{outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,162,75,.18); background:#fff;}
+  .auth-submit{
+    margin-top:6px; width:100%; padding:15px; background:var(--burgundy); color:var(--cream); border:none; border-radius:6px;
+    font-size:13px; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:all .25s ease; font-weight:500;
+  }
+  .auth-submit:hover{background:var(--burgundy-dark); box-shadow:0 14px 26px rgba(92,19,48,.28); transform:translateY(-1px);}
+  .auth-alt{text-align:center; margin-top:20px; font-size:13px; color:var(--ink-soft);}
+  .auth-alt a{color:var(--burgundy); font-weight:500; border-bottom:1px solid var(--gold);}
+  .auth-divider{display:flex; align-items:center; gap:12px; margin:22px 0; color:var(--ink-soft); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase;}
+  .auth-divider::before, .auth-divider::after{content:''; flex:1; height:1px; background:var(--line);}
+  .auth-social{display:flex; gap:12px;}
+  .auth-social button{
+    flex:1; padding:12px; border:1px solid var(--line); background:#fff; border-radius:6px; cursor:pointer;
+    font-size:12.5px; color:var(--ink); display:flex; align-items:center; justify-content:center; gap:8px; transition:.2s;
+  }
+  .auth-social button:hover{border-color:var(--gold); background:var(--blush);}
+  .signup-only{display:none;}
+  .auth-panel.mode-signup .signup-only{display:block;}
+  .auth-panel.mode-signup .login-only{display:none;}
+
+  @media(max-width:680px){
+    .auth-modal{grid-template-columns:1fr;}
+    .auth-visual{padding:30px 24px;}
+    .gift-stage{width:130px; height:130px;}
+    .auth-panel{padding:32px 26px;}
+  }
+
+  /* ---------- shop-by tab bar ---------- */
+  .tabbar-section{background:var(--cream); border-bottom:1px solid var(--line); position:relative;}
+  .tabbar-outer{position:relative;}
+  .tabbar{
+    display:flex; gap:12px; overflow-x:auto; padding:22px 32px; max-width:1200px; margin:0 auto;
+    scrollbar-width:none; -ms-overflow-style:none;
+  }
+  .tabbar::-webkit-scrollbar{display:none;}
+  .tab-pill{
+    flex:0 0 auto; display:flex; align-items:center; gap:9px; padding:11px 20px; border-radius:30px;
+    border:1px solid var(--line); background:#fff; color:var(--ink); cursor:pointer;
+    font-family:'Jost',sans-serif; font-size:13px; letter-spacing:.04em; white-space:nowrap;
+    transition:all .28s cubic-bezier(.2,.7,.3,1);
+  }
+  .tab-pill svg{width:17px; height:17px; flex-shrink:0; transition:transform .28s ease;}
+  .tab-pill:hover{border-color:var(--gold); transform:translateY(-2px); box-shadow:0 10px 20px rgba(92,19,48,.1);}
+  .tab-pill.active{
+    background:linear-gradient(135deg, var(--burgundy), var(--burgundy-dark)); color:var(--cream); border-color:var(--burgundy);
+    box-shadow:0 12px 24px rgba(92,19,48,.28);
+  }
+  .tab-pill.active svg{transform:scale(1.1);}
+  .tabbar-fade{position:absolute; top:0; bottom:0; width:56px; pointer-events:none; z-index:2;}
+  .tabbar-fade.left{left:0; background:linear-gradient(90deg, var(--cream), transparent);}
+  .tabbar-fade.right{right:0; background:linear-gradient(270deg, var(--cream), transparent);}
+
+  /* ---------- micro interactions / extra animation ---------- */
+  .nav-icons button:active{transform:scale(.88);}
+  .nav-icons button svg{transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
+  .nav-icons button:hover svg{transform:scale(1.12) rotate(-6deg);}
+  .cat-card .icon{transition:transform .45s cubic-bezier(.34,1.56,.64,1);}
+  .cat-card:hover .icon{transform:scale(1.15) rotate(-8deg);}
+  .logo em{display:inline-block; animation:emBob 3.2s ease-in-out infinite;}
+  @keyframes emBob{0%,100%{transform:translateY(0) rotate(0);} 50%{transform:translateY(-3px) rotate(-6deg);}}
+  .ripple{position:absolute; border-radius:50%; background:rgba(255,255,255,.55); transform:scale(0); animation:rippleAnim .6s ease-out; pointer-events:none;}
+  .btn-outline .ripple, .view-all .ripple{background:rgba(92,19,48,.18);}
+  @keyframes rippleAnim{to{transform:scale(2.6); opacity:0;}}
+  .btn, .view-all, .tab-pill, .auth-submit, .spin-btn, .redeem-btn{position:relative; overflow:hidden;}
+  @keyframes popIn{0%{transform:scale(.4); opacity:0;} 60%{transform:scale(1.12); opacity:1;} 100%{transform:scale(1);}}
+  @keyframes coinPop{0%{transform:scale(1);} 30%{transform:scale(1.35) rotate(-8deg);} 60%{transform:scale(.92) rotate(6deg);} 100%{transform:scale(1) rotate(0);}}
+  .coin-bump{animation:coinPop .55s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes flamePulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.22);}}
+  .flame{display:inline-block; animation:flamePulse 1.6s ease-in-out infinite;}
+  @keyframes drawerLinkIn{from{opacity:0; transform:translateX(24px);} to{opacity:1; transform:translateX(0);}}
+  @keyframes slideFadeUp{from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- wallet + coin nav icon ---------- */
+  .wallet-btn{position:relative;}
+  .coin-count{
+    position:absolute; top:-4px; right:-6px; background:linear-gradient(135deg,var(--gold),#a9812f); color:var(--burgundy-deeper);
+    font-size:9.5px; font-weight:700; border-radius:20px; padding:1px 6px; min-width:16px; text-align:center;
+    box-shadow:0 3px 8px rgba(92,19,48,.3); border:1px solid rgba(255,255,255,.6);
+  }
+
+  /* ---------- hamburger morph ---------- */
+  .menu-toggle{width:38px; height:38px; border-radius:50%; display:none; flex-direction:column; align-items:center; justify-content:center; gap:5px; transition:background .2s ease;}
+  .menu-toggle:hover{background:var(--blush);}
+  .menu-toggle .bar{width:20px; height:2px; background:var(--burgundy); border-radius:2px; transition:transform .35s cubic-bezier(.4,0,.2,1), opacity .25s ease, width .3s ease;}
+  .menu-toggle.active .bar:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .menu-toggle.active .bar:nth-child(2){opacity:0; width:0;}
+  .menu-toggle.active .bar:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+  /* ---------- mobile nav drawer ---------- */
+  .mobile-nav-overlay{
+    position:fixed; inset:0; background:rgba(37,6,19,.5); backdrop-filter:blur(3px); z-index:150;
+    opacity:0; pointer-events:none; transition:opacity .35s ease;
+  }
+  .mobile-nav-overlay.open{opacity:1; pointer-events:auto;}
+  .mobile-nav{
+    position:fixed; top:0; right:0; height:100%; width:min(320px,84vw); background:var(--cream); z-index:160;
+    box-shadow:-20px 0 50px rgba(37,6,19,.3); transform:translateX(100%); transition:transform .45s cubic-bezier(.2,.8,.3,1);
+    display:flex; flex-direction:column; padding:26px 26px 34px;
+  }
+  .mobile-nav.open{transform:translateX(0);}
+  .mobile-nav-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:30px;}
+  .mobile-nav-top .auth-logo{font-family:'Playfair Display',serif; font-weight:700; font-size:21px; color:var(--burgundy);}
+  .mobile-nav-top .auth-logo em{font-style:normal; color:var(--gold);}
+  .mobile-nav a.mnav-link{
+    display:block; padding:15px 4px; font-size:16px; letter-spacing:.03em; color:var(--ink); border-bottom:1px solid var(--line);
+    opacity:0; font-family:'Jost',sans-serif;
+  }
+  .mobile-nav.open a.mnav-link{animation:drawerLinkIn .5s cubic-bezier(.2,.8,.3,1) forwards;}
+  .mobile-nav.open a.mnav-link:nth-child(1){animation-delay:.08s;}
+  .mobile-nav.open a.mnav-link:nth-child(2){animation-delay:.14s;}
+  .mobile-nav.open a.mnav-link:nth-child(3){animation-delay:.2s;}
+  .mobile-nav.open a.mnav-link:nth-child(4){animation-delay:.26s;}
+  .mobile-nav.open a.mnav-link:nth-child(5){animation-delay:.32s;}
+  .mobile-nav.open a.mnav-link:nth-child(6){animation-delay:.38s;}
+  .mnav-actions{display:flex; gap:12px; margin-top:26px;}
+  .mnav-actions button{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 8px; border-radius:10px;
+    border:1px solid var(--line); background:#fff; color:var(--burgundy); cursor:pointer; font-size:11.5px; letter-spacing:.05em; text-transform:uppercase;
+  }
+  .mnav-actions button:hover{border-color:var(--gold); background:var(--blush);}
+
+  /* ---------- wallet modal ---------- */
+  .wallet-modal{
+    width:min(560px,100%); max-height:92vh; overflow-y:auto; border-radius:16px; background:#fff; position:relative;
+    box-shadow:0 50px 90px rgba(37,6,19,.4); transform:scale(.92) translateY(16px); opacity:0;
+    transition:transform .4s cubic-bezier(.2,.8,.3,1), opacity .4s ease;
+  }
+  .modal-overlay.open .wallet-modal{transform:scale(1) translateY(0); opacity:1;}
+  .wallet-modal-close{position:absolute; top:16px; right:16px; z-index:5; background:rgba(255,255,255,.85);}
+  .wallet-header{
+    background:linear-gradient(135deg, var(--burgundy-dark), var(--burgundy) 60%, #4a1027); color:var(--cream);
+    padding:34px 30px 28px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    position:relative; overflow:hidden;
+  }
+  .wallet-header::before{content:''; position:absolute; right:-40px; top:-40px; width:180px; height:180px; border-radius:50%; background:radial-gradient(circle, rgba(231,205,140,.18), transparent 70%);}
+  .wallet-balance{display:flex; align-items:center; gap:14px; position:relative; z-index:1;}
+  .coin-icon{font-size:34px; filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));}
+  .balance-amount{font-family:'Playfair Display',serif; font-size:32px; font-weight:700; color:var(--gold-light); line-height:1;}
+  .balance-label{font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; opacity:.75; margin-top:4px;}
+  .streak-pill{
+    background:rgba(251,243,234,.12); border:1px solid rgba(231,205,140,.35); padding:9px 16px; border-radius:30px;
+    font-size:13px; display:flex; align-items:center; gap:8px; position:relative; z-index:1;
+  }
+  .wallet-body{padding:32px 30px 36px; display:flex; flex-direction:column; gap:36px;}
+  .wallet-body h3{font-family:'Playfair Display',serif; font-size:19px; color:var(--burgundy-dark); margin-bottom:6px;}
+  .spin-section{text-align:center;}
+  .spin-section p{color:var(--ink-soft); font-size:13.5px; margin-bottom:20px;}
+  .wheel-wrap{position:relative; width:230px; height:230px; margin:0 auto 26px;}
+  .wheel-pointer{
+    position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:0; height:0; z-index:3;
+    border-left:11px solid transparent; border-right:11px solid transparent; border-top:20px solid var(--burgundy-dark);
+    filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));
+  }
+  .wheel{
+    width:100%; height:100%; border-radius:50%; position:relative; border:6px solid var(--gold);
+    box-shadow:0 18px 40px rgba(92,19,48,.3), inset 0 0 0 2px rgba(255,255,255,.4);
+    transition:transform 4.2s cubic-bezier(.15,.7,.1,1);
+  }
+  .wheel-hub{
+    position:absolute; top:50%; left:50%; width:44px; height:44px; transform:translate(-50%,-50%); border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold) 60%, #a9812f); z-index:2;
+    box-shadow:0 4px 10px rgba(0,0,0,.3), inset 0 0 0 2px rgba(255,255,255,.5); display:flex; align-items:center; justify-content:center;
+    font-size:16px;
+  }
+  .wheel-seg-label{
+    position:absolute; top:50%; left:50%; width:0; height:0; font-size:11px; font-weight:700;
+    font-family:'Jost',sans-serif; letter-spacing:.01em; pointer-events:none;
+  }
+  .wheel-seg-label span{position:absolute; display:block; white-space:nowrap; text-shadow:0 1px 1px rgba(255,255,255,.15);}
+  .spin-btn{min-width:170px;}
+  .spin-btn:disabled{opacity:.5; cursor:not-allowed; transform:none !important; box-shadow:none !important;}
+  #spinStatus.ready{color:var(--burgundy); font-weight:500;}
+  .redeem-section{text-align:center;}
+  .redeem-progress{max-width:320px; margin:0 auto 18px;}
+  .redeem-bar{height:10px; border-radius:20px; background:var(--blush); overflow:hidden; margin-bottom:8px;}
+  .redeem-fill{height:100%; width:0%; background:linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius:20px; transition:width .6s cubic-bezier(.2,.8,.3,1);}
+  #redeemText{font-size:12.5px; color:var(--ink-soft); letter-spacing:.04em;}
+  .redeem-btn{
+    background:var(--burgundy); color:var(--cream); border:none; padding:14px 30px; border-radius:6px; font-size:12.5px;
+    letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:all .25s ease; font-weight:500;
+  }
+  .redeem-btn:not(:disabled):hover{background:var(--burgundy-dark); transform:translateY(-2px); box-shadow:0 14px 26px rgba(92,19,48,.28);}
+  .redeem-code{
+    margin-top:18px; display:inline-flex; align-items:center; gap:12px; background:var(--blush); border:1px dashed var(--gold);
+    padding:14px 20px; border-radius:8px; animation:popIn .5s cubic-bezier(.2,.8,.3,1);
+  }
+  .redeem-code .code-text{font-family:'Playfair Display',serif; font-weight:700; color:var(--burgundy); letter-spacing:.05em; font-size:16px;}
+  .redeem-code button{background:var(--burgundy); color:#fff; border:none; padding:7px 14px; border-radius:5px; font-size:11px; letter-spacing:.06em; text-transform:uppercase; cursor:pointer;}
+  .redeem-code button:hover{background:var(--burgundy-dark);}
+
+  /* ---------- toast ---------- */
+  .toast{
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); z-index:400;
+    background:var(--burgundy-dark); color:var(--cream); padding:15px 26px; border-radius:40px; font-size:13.5px;
+    display:flex; align-items:center; gap:10px; box-shadow:0 20px 40px rgba(37,6,19,.4); opacity:0; pointer-events:none;
+    transition:opacity .35s ease, transform .35s cubic-bezier(.2,.8,.3,1); border:1px solid rgba(231,205,140,.3);
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto;}
+
+  @media(max-width:680px){
+    .wallet-header{padding:28px 22px 22px;}
+    .wallet-body{padding:26px 22px 30px; gap:28px;}
+    .balance-amount{font-size:26px;}
+  }
+
+  /* ---------- responsive ---------- */
+  @media(max-width:980px){
+    nav.links{display:none;}
+    .menu-toggle{display:flex;}
+    .hero-inner{grid-template-columns:1fr; text-align:center;}
+    .eyebrow, .btn-row{justify-content:center;}
+    .hero p{margin-left:auto; margin-right:auto;}
+    .cat-grid{grid-template-columns:repeat(3,1fr);}
+    .product-grid{grid-template-columns:repeat(2,1fr);}
+    .foot-grid{grid-template-columns:1fr 1fr; gap:36px;}
+    .testi-grid{grid-template-columns:1fr;}
+  }
+  @media(max-width:560px){
+    .cat-grid{grid-template-columns:repeat(2,1fr);}
+    .product-grid{grid-template-columns:1fr 1fr;}
+    .promo{flex-direction:column; align-items:flex-start;}
+    .foot-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="announce">
+  <div class="announce-track">
+    <span>✦ FREE SHIPPING ON ORDERS ABOVE ₹499</span><span>✦ NEW RAKHI EDIT NOW LIVE</span><span>✦ USE CODE DAZEL10 FOR 10% OFF</span><span>✦ HANDPICKED. GIFT-READY. YOURS.</span>
+    <span>✦ FREE SHIPPING ON ORDERS ABOVE ₹499</span><span>✦ NEW RAKHI EDIT NOW LIVE</span><span>✦ USE CODE DAZEL10 FOR 10% OFF</span><span>✦ HANDPICKED. GIFT-READY. YOURS.</span>
+  </div>
+</div>
+
+<header>
+  <div class="nav-inner">
+    <a href="#" class="logo"><img src="logo1.png" alt="DAZEL Logo"></a>
+    <nav class="links">
+      <a href="#categories">Gift Boxes</a>
+      <a href="#jaipuri">Jaipuri Sets</a>
+      <a href="#earrings">Earrings</a>
+      <a href="#bracelets">Bracelets</a>
+      <a href="#necklaces">Necklaces</a>
+      <a href="#reviews">Reviews</a>
+    </nav>
+    <div class="nav-icons">
+      <button title="Search" aria-label="Search">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button title="Account" aria-label="Account" class="account-btn" id="accountBtn">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+        <span class="gift-ping"></span>
+      </button>
+      <button title="Cart" aria-label="Cart" style="position:relative;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6L5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        <span class="cart-count">0</span>
+      </button>
+      <button title="Wallet" aria-label="Wallet" class="wallet-btn" id="walletBtn">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="16.5" cy="14" r="1.4" fill="currentColor" stroke="none"/></svg>
+        <span class="coin-count" id="coinCount">0</span>
+      </button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE NAV DRAWER -->
+<div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-top">
+    <span class="auth-logo">DAZ<em>e</em>L</span>
+    <button class="modal-close" id="mobileNavClose" aria-label="Close menu">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+    </button>
+  </div>
+  <a href="#categories" class="mnav-link">Gift Boxes</a>
+  <a href="#jaipuri" class="mnav-link">Jaipuri Sets</a>
+  <a href="#earrings" class="mnav-link">Earrings</a>
+  <a href="#bracelets" class="mnav-link">Bracelets</a>
+  <a href="#necklaces" class="mnav-link">Necklaces</a>
+  <a href="#reviews" class="mnav-link">Reviews</a>
+  <div class="mnav-actions">
+    <button id="mnavAccount">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      Account
+    </button>
+    <button id="mnavWallet">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="16.5" cy="14" r="1.4" fill="currentColor" stroke="none"/></svg>
+      Wallet
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" style="padding:0;">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow"><span class="ln"></span> HANDCRAFTED FESTIVE JEWELRY</div>
+      <h1>Adorn every story <i>in burgundy &amp; gold</i></h1>
+      <p>Jaipuri sets, jhumkas and gifting boxes designed for the moments you'll remember. Curated in small batches, priced for everyday indulgence.</p>
+      <div class="btn-row">
+        <a href="#categories" class="btn btn-gold">Shop The Edit</a>
+        <a href="#jaipuri" class="btn btn-outline">Explore Jaipuri Sets</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="ring r2"></div>
+      <div class="ring"></div>
+      <div class="glow"></div>
+      <div class="plate">
+        <svg width="46%" height="46%" viewBox="0 0 100 100" fill="none" stroke="#E7CD8C" stroke-width="1.4">
+          <path d="M50 8 C 35 8 28 22 32 34 C 22 34 16 44 20 54 C 24 64 36 68 44 62 L 50 92 L 56 62 C 64 68 76 64 80 54 C 84 44 78 34 68 34 C 72 22 65 8 50 8 Z"/>
+          <circle cx="50" cy="30" r="6"/>
+          <circle cx="50" cy="86" r="3" fill="#E7CD8C"/>
+        </svg>
+      </div>
+      <div class="float-tag a">✦ Best Seller</div>
+      <div class="float-tag b">1,200+ ★★★★★ reviews</div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP BY CATEGORY TAB BAR -->
+<section class="tabbar-section">
+  <div class="tabbar-outer">
+    <div class="tabbar-fade left"></div>
+    <div class="tabbar-fade right"></div>
+    <div class="tabbar" id="tabbar">
+      <button class="tab-pill active" data-target="categories">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>
+        All
+      </button>
+      <button class="tab-pill" data-target="couple">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="8" cy="8" r="3.2"/><circle cx="16" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.4-5.5 5-5.5s5 2.2 5 5.5M11 20c0-3.3 2.4-5.5 5-5.5s5 2.2 5 5.5"/></svg>
+        Couple
+      </button>
+      <button class="tab-pill" data-target="women">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg>
+        Women
+      </button>
+      <button class="tab-pill" data-target="men">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M8 20l4-8 4 8M12 12v-1"/></svg>
+        Men
+      </button>
+      <button class="tab-pill" data-target="friends">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="8" cy="9" r="3"/><circle cx="17" cy="9" r="3"/><path d="M2 20c0-3 2.7-5 6-5s6 2 6 5M11 20c0-2.6 2.4-4.4 5-4.4s6 1.8 6 4.4"/></svg>
+        Friends
+      </button>
+      <button class="tab-pill" data-target="giftboxes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="10" width="18" height="10" rx="1.5"/><path d="M3 10h18M12 10v10M12 10c-2-4-8-4-8-1 0 1.5 3.5 1 8 1zM12 10c2-4 8-4 8-1 0 1.5-3.5 1-8 1z"/></svg>
+        Gifts
+      </button>
+      <button class="tab-pill" data-target="kurti">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 3h8l-1.5 5H9.5z"/><path d="M9.5 8c-2.5 2-3 6.5-2 10.5l2.5 1 1-4 1 4 2.5-1c1-4 .5-8.5-2-10.5"/></svg>
+        Kurti
+      </button>
+      <button class="tab-pill" data-target="jaipuri">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z"/></svg>
+        Jewellery
+      </button>
+      <button class="tab-pill" data-target="necklaces">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5c0 5 3.5 9 8 9s8-4 8-9"/><circle cx="12" cy="16" r="2.4"/></svg>
+        Bridal
+      </button>
+      <button class="tab-pill" data-target="earrings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="6" r="2"/><path d="M12 8c-3 2-3 6 0 8 3-2 3-6 0-8z"/></svg>
+        Earrings
+      </button>
+    </div>
+  </div>
+</section>
+
+<div class="wrap" style="padding-top:36px;">
+  <div class="motif"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A24B" stroke-width="1.3"><path d="M12 3l2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z"/></svg><div class="rule"></div></div>
+</div>
+
+<!-- CATEGORY STRIP -->
+<section class="cat-strip" id="categories">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Shop By Category</div>
+      <h2>Find Your Piece</h2>
+      <p>From temple-inspired jhumkas to delicate everyday stacks — every category, curated.</p>
+    </div>
+    <div class="cat-grid reveal-stagger reveal">
+      <div class="cat-card">
+        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M24 6c-6 0-9 5-7 10-6 0-9 5-6 10s10 6 13 2l4 12h1l4-12c3 4 10 3 13-2s0-10-6-10c2-5-1-10-7-10z"/><circle cx="24" cy="14" r="2.6"/></svg>
+        <span>Gift Boxes</span>
+      </div>
+      <div class="cat-card">
+        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M14 6h20l-2 8H16z"/><path d="M17 14c-3 4-1 10 4 12l3 10 3-10c5-2 7-8 4-12"/></svg>
+        <span>Kurti + Jhumke</span>
+      </div>
+      <div class="cat-card" id="jaipuri">
+        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="24" cy="18" r="9"/><path d="M24 27v13M17 40h14"/><circle cx="24" cy="18" r="3"/></svg>
+        <span>Jaipuri Sets</span>
+      </div>
+      <div class="cat-card">
+        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 20a12 8 0 0 1 24 0v2a12 8 0 0 1-24 0z"/><path d="M8 22h4M36 22h4"/></svg>
+        <span>Choker Sets</span>
+      </div>
+      <div class="cat-card" id="earrings">
+        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="24" cy="12" r="4"/><path d="M24 16c-6 4-6 12 0 16 6-4 6-12 0-16z"/></svg>
+        <span>Earrings</span>
+      </div>
+      <div class="cat-card" id="bracelets">
+        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="24" cy="24" rx="16" ry="9"/><ellipse cx="24" cy="24" rx="10" ry="5.5"/></svg>
+        <span>Bracelets</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="motif"><div class="rule"></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A24B" stroke-width="1.3"><path d="M12 3l2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z"/></svg><div class="rule"></div></div></div>
+
+<!-- FEATURED: GIFT BOXES -->
+<section id="giftboxes">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Best Sellers</div>
+      <h2>Gift Boxes, Ready To Surprise</h2>
+      <p>A complete jewelry wardrobe wrapped in velvet — because the unboxing should feel like the gift.</p>
+    </div>
+    <div class="product-grid reveal-stagger reveal">
+
+      <div class="card">
+        <div class="thumb">
+          <span class="badge">Sale</span>
+          <div class="wish"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.6-9.5-9C.5 8 2 4 6 4c2.2 0 3.8 1.2 6 3.4C14.2 5.2 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.4-9.5 9-9.5 9z"/></svg></div>
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="8" y="16" width="32" height="24" rx="2"/><path d="M8 22h32"/><path d="M18 16v-2a6 6 0 0112 0v2"/><circle cx="24" cy="29" r="3"/></svg>
+        </div>
+        <div class="info">
+          <div class="cname">Velvet Heritage Box — 9 Earrings, 5 Bangles &amp; a Keepsake Note</div>
+          <div class="price"><span class="now">₹1,999</span><span class="was">₹5,997</span><span class="off">67% off</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="thumb">
+          <span class="badge">Sale</span>
+          <div class="wish"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.6-9.5-9C.5 8 2 4 6 4c2.2 0 3.8 1.2 6 3.4C14.2 5.2 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.4-9.5 9-9.5 9z"/></svg></div>
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 14h24l2 8-14 14-14-14z"/><path d="M12 14l6 8h12l6-8"/><path d="M18 22l6 14 6-14"/></svg>
+        </div>
+        <div class="info">
+          <div class="cname">Purse of Surprises — Jaipuri Earrings, Kada &amp; Bracelet Trio</div>
+          <div class="price"><span class="now">₹999</span><span class="was">₹4,497</span><span class="off">78% off</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="thumb">
+          <span class="badge">Sale</span>
+          <div class="wish"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.6-9.5-9C.5 8 2 4 6 4c2.2 0 3.8 1.2 6 3.4C14.2 5.2 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.4-9.5 9-9.5 9z"/></svg></div>
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="18" cy="18" r="5"/><circle cx="30" cy="18" r="5"/><circle cx="24" cy="30" r="5"/><path d="M18 23v6M30 23v6M22 30h4"/></svg>
+        </div>
+        <div class="info">
+          <div class="cname">Set Of 12 Oxidised Stud Earrings With Folding Case</div>
+          <div class="price"><span class="now">₹999</span><span class="was">₹2,547</span><span class="off">61% off</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="thumb">
+          <span class="badge">Sale</span>
+          <div class="wish"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.6-9.5-9C.5 8 2 4 6 4c2.2 0 3.8 1.2 6 3.4C14.2 5.2 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.4-9.5 9-9.5 9z"/></svg></div>
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M24 8c-6 4-6 12 0 16-6 4-6 12 0 16"/><path d="M24 8c6 4 6 12 0 16 6 4 6 12 0 16"/></svg>
+        </div>
+        <div class="info">
+          <div class="cname">Royal Wine Jhumka Box — 12 Pairs With Sandesh Card</div>
+          <div class="price"><span class="now">₹999</span><span class="was">₹3,049</span><span class="off">67% off</span></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="view-all-row"><a href="#" class="view-all">View All Gift Boxes</a></div>
+  </div>
+</section>
+
+<!-- PROMO BANNER -->
+<div class="wrap">
+  <div class="promo reveal">
+    <div>
+      <h3>Building a wedding trousseau?</h3>
+      <p>Get 15% off on Jaipuri sets of 3 or more — code DAZELBRIDE</p>
+    </div>
+    <a href="#jaipuri" class="btn btn-gold">Shop Jaipuri Sets</a>
+  </div>
+</div>
+
+<!-- JAIPURI SETS GRID -->
+<section id="necklaces">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Fan Favorite</div>
+      <h2>Jaipuri Sets &amp; Necklaces</h2>
+      <p>Hand-finished pieces in oxidised silver, kundan and meenakari — traditional craft for modern wear.</p>
+    </div>
+    <div class="product-grid reveal-stagger reveal">
+
+      <div class="card">
+        <div class="thumb"><span class="badge">Sale</span>
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="10" y="12" width="28" height="20" rx="2"/><path d="M10 18h28M18 12v-2a6 6 0 0112 0v2"/></svg>
+        </div>
+        <div class="info">
+          <div class="cname">Premium Velvet Jewelry Organiser</div>
+          <div class="price"><span class="now">₹999</span><span class="was">₹2,997</span><span class="off">67% off</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="thumb"><span class="badge">Sale</span>
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M24 10a10 10 0 100 20 10 10 0 000-20z"/><path d="M24 4v6M24 30v6M4 24h6M38 24h6"/></svg>
+        </div>
+        <div class="info">
+          <div class="cname">Graceful Floral Earring &amp; Bracelet Combo</div>
+          <div class="price"><span class="now">₹199</span><span class="was">₹597</span><span class="off">67% off</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="thumb"><span class="badge">Sale</span>
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M24 8c8 0 14 8 14 8s-6 8-14 8-14-8-14-8 6-8 14-8z"/><circle cx="24" cy="16" r="3"/></svg>
+        </div>
+        <div class="info">
+          <div class="cname">Elegant Lotus Necklace &amp; Earring Set</div>
+          <div class="price"><span class="now">₹299</span><span class="was">₹897</span><span class="off">67% off</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="thumb"><span class="badge">Sale</span>
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 20a10 6 0 0120 0v3a10 6 0 01-20 0z"/><path d="M14 23c0 5 4.5 9 10 9s10-4 10-9"/></svg>
+        </div>
+        <div class="info">
+          <div class="cname">Traditional Peacock Design Choker Set</div>
+          <div class="price"><span class="now">₹199</span><span class="was">₹597</span><span class="off">67% off</span></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="view-all-row"><a href="#" class="view-all">View All Jaipuri Sets</a></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-strip" id="reviews">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Loved By Many</div>
+      <h2>What Customers Say</h2>
+      <p>Real words from the people who wear Dazel.</p>
+    </div>
+    <div class="testi-grid reveal-stagger reveal">
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">Ordered a gift box for my sister and the packaging alone made it feel so premium. The jhumkas are even better in hand than in photos.</p>
+        <div class="testi-who"><div class="avatar"></div><div><div class="name">Sarika H.</div><div class="place">Pune, Maharashtra</div></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">Bought the Jaipuri set for my engagement and got so many compliments. Great finish for the price, will definitely reorder.</p>
+        <div class="testi-who"><div class="avatar"></div><div><div class="name">Ananya R.</div><div class="place">Jaipur, Rajasthan</div></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">Was skeptical ordering jewelry online, but the quality genuinely surprised me. My mother loved the choker set I gifted her.</p>
+        <div class="testi-who"><div class="avatar"></div><div><div class="name">Kritika M.</div><div class="place">Bikaner, Rajasthan</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo">DAZ<em>e</em>L</div>
+        <p class="tag">Festive and everyday jewelry, handpicked in small batches from Rajasthan's finest artisans — designed to gift, made to keep.</p>
+        <div class="social-row">
+          <a href="#" title="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" title="YouTube"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="12" rx="3"/><path d="M11 10l4 2-4 2z"/></svg></a>
+          <a href="#" title="Facebook"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 8h2V5h-2a4 4 0 00-4 4v2H9v3h2v6h3v-6h2.5l.5-3H14V9a1 1 0 011-1z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#categories">Gift Boxes</a></li>
+          <li><a href="#jaipuri">Jaipuri Sets</a></li>
+          <li><a href="#earrings">Earrings</a></li>
+          <li><a href="#bracelets">Bracelets</a></li>
+          <li><a href="#necklaces">Necklaces</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Information</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+          <li><a href="#">Return &amp; Shipping Policy</a></li>
+          <li><a href="#">Track Order</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact Us</h4>
+        <ul>
+          <li>📍 Dazel Studio, Chinchwad, Pune 411018</li>
+          <li>📧 support@dazel.in</li>
+          <li>💬 WhatsApp: +91 86260 75748</li>
+        </ul>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <span>© 2026 Dazel. All rights reserved.</span>
+      <span>Design concept, not affiliated with any existing brand.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authOverlay">
+  <div class="auth-modal">
+    <div class="auth-visual">
+      <div class="glow-behind"></div>
+      <div class="gift-stage">
+        <svg viewBox="0 0 100 110">
+          <!-- sparkles -->
+          <g fill="#E7CD8C">
+            <path class="spark s1" d="M18 30l1.6 4 4 1.6-4 1.6-1.6 4-1.6-4-4-1.6 4-1.6z"/>
+            <path class="spark s2" d="M84 22l1.3 3.3 3.3 1.3-3.3 1.3-1.3 3.3-1.3-3.3-3.3-1.3 3.3-1.3z"/>
+            <path class="spark s3" d="M12 62l1.3 3.3 3.3 1.3-3.3 1.3-1.3 3.3-1.3-3.3-3.3-1.3 3.3-1.3z"/>
+            <path class="spark s4" d="M88 60l1.6 4 4 1.6-4 1.6-1.6 4-1.6-4-4-1.6 4-1.6z"/>
+            <path class="spark s5" d="M50 12l1.3 3.3 3.3 1.3-3.3 1.3-1.3 3.3-1.3-3.3-3.3-1.3 3.3-1.3z"/>
+            <path class="spark s6" d="M28 8l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1z"/>
+          </g>
+          <!-- box base -->
+          <g class="gift-box-base">
+            <rect x="24" y="55" width="52" height="40" rx="3" fill="#E7CD8C"/>
+            <rect x="24" y="55" width="52" height="40" rx="3" fill="none" stroke="#5C1330" stroke-width="1.5" opacity=".25"/>
+            <rect x="45" y="55" width="10" height="40" fill="#5C1330"/>
+          </g>
+          <!-- lid -->
+          <g class="gift-lid">
+            <rect x="19" y="42" width="62" height="16" rx="3" fill="#C9A24B"/>
+            <rect x="45" y="42" width="10" height="16" fill="#5C1330"/>
+          </g>
+          <!-- bow -->
+          <g class="gift-bow">
+            <path d="M50 44c-4-10-18-12-18-2 0 6 8 6 18 4z" fill="#5C1330"/>
+            <path d="M50 44c4-10 18-12 18-2 0 6-8 6-18 4z" fill="#5C1330"/>
+            <circle cx="50" cy="43" r="4.5" fill="#E7CD8C"/>
+          </g>
+        </svg>
+      </div>
+      <h3>Sign up &amp; unwrap<br>your welcome gift</h3>
+      <p>New members get 10% off their first order — revealed right after you join.</p>
+    </div>
+
+    <div class="auth-panel mode-login" id="authPanel">
+      <div class="auth-top">
+        <span class="auth-logo">DAZ<em>e</em>L</span>
+        <button class="modal-close" id="authClose" aria-label="Close">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+        </button>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin">Log In</button>
+        <button class="auth-tab" id="tabSignup">Sign Up</button>
+      </div>
+
+      <form id="authForm" onsubmit="return false;">
+        <div class="auth-field signup-only">
+          <label>Full Name</label>
+          <input type="text" placeholder="Your name" autocomplete="name">
+        </div>
+        <div class="auth-field">
+          <label>Email or Phone</label>
+          <input type="text" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="auth-submit" id="authSubmitBtn">Log In</button>
+      </form>
+
+      <div class="auth-divider">or continue with</div>
+      <div class="auth-social">
+        <button type="button">Google</button>
+        <button type="button">WhatsApp</button>
+      </div>
+
+      <div class="auth-alt">
+        <span class="login-only">New to Dazel? <a href="#" id="switchToSignup">Create an account</a></span>
+        <span class="signup-only">Already have an account? <a href="#" id="switchToLogin">Log in</a></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WALLET MODAL -->
+<div class="modal-overlay" id="walletOverlay">
+  <div class="wallet-modal">
+    <button class="modal-close wallet-modal-close" id="walletClose" aria-label="Close">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+    </button>
+
+    <div class="wallet-header">
+      <div class="wallet-balance">
+        <span class="coin-icon" id="coinIconBig">🪙</span>
+        <div>
+          <div class="balance-amount" id="walletBalance">0</div>
+          <div class="balance-label">Dazel Coins</div>
+        </div>
+      </div>
+      <div class="streak-pill"><span class="flame">🔥</span> <span id="streakCount">0</span>-Day Streak</div>
+    </div>
+
+    <div class="wallet-body">
+      <div class="spin-section">
+        <h3>Daily Spin</h3>
+        <p id="spinStatus">Spin once a day to grow your streak and win coins!</p>
+        <div class="wheel-wrap">
+          <div class="wheel-pointer"></div>
+          <div class="wheel" id="wheel">
+            <div class="wheel-hub">✦</div>
+          </div>
+        </div>
+        <button class="btn btn-gold spin-btn" id="spinBtn">Spin Now</button>
+      </div>
+
+      <div class="redeem-section">
+        <h3>Redeem for ₹100 OFF</h3>
+        <p style="color:var(--ink-soft); font-size:13.5px; margin-bottom:16px;">Collect 1,000 coins to unlock a ₹100 off coupon on your next order.</p>
+        <div class="redeem-progress">
+          <div class="redeem-bar"><div class="redeem-fill" id="redeemFill"></div></div>
+          <span id="redeemText">0 / 1000 coins</span>
+        </div>
+        <button class="redeem-btn" id="redeemBtn" disabled>Redeem ₹100 OFF</button>
+        <div class="redeem-code" id="redeemCode" style="display:none;">
+          <span class="code-text" id="redeemCodeText">DAZEL100</span>
+          <button id="copyCodeBtn">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  window.addEventListener('load', () => document.body.classList.add('loaded'));
+
+  // shop-by tab bar
+  const tabPills = document.querySelectorAll('.tab-pill');
+  tabPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      tabPills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      const targetId = pill.getAttribute('data-target');
+      let el = document.getElementById(targetId);
+      if(!el) el = document.getElementById('categories');
+      if(el){
+        const headerOffset = 130;
+        const top = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  // auth modal
+  const overlay = document.getElementById('authOverlay');
+  const panel = document.getElementById('authPanel');
+  const tabLogin = document.getElementById('tabLogin');
+  const tabSignup = document.getElementById('tabSignup');
+  const submitBtn = document.getElementById('authSubmitBtn');
+
+  function openModal(mode){
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setMode(mode || 'login');
+  }
+  function closeModal(){
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function setMode(mode){
+    if(mode === 'signup'){
+      panel.classList.add('mode-signup');
+      tabSignup.classList.add('active'); tabLogin.classList.remove('active');
+      submitBtn.textContent = 'Create Account';
+    } else {
+      panel.classList.remove('mode-signup');
+      tabLogin.classList.add('active'); tabSignup.classList.remove('active');
+      submitBtn.textContent = 'Log In';
+    }
+  }
+
+  document.getElementById('accountBtn').addEventListener('click', () => openModal('login'));
+  document.getElementById('authClose').addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
+  tabLogin.addEventListener('click', () => setMode('login'));
+  tabSignup.addEventListener('click', () => setMode('signup'));
+  document.getElementById('switchToSignup').addEventListener('click', (e) => { e.preventDefault(); setMode('signup'); });
+  document.getElementById('switchToLogin').addEventListener('click', (e) => { e.preventDefault(); setMode('login'); });
+
+  // ---------- ripple effect on buttons ----------
+  function attachRipple(el){
+    el.addEventListener('click', function(e){
+      const rect = this.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      const size = Math.max(rect.width, rect.height) * 1.4;
+      ripple.className = 'ripple';
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+      this.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 650);
+    });
+  }
+  document.querySelectorAll('.btn, .view-all, .tab-pill, .auth-submit').forEach(attachRipple);
+
+  // ---------- hamburger / mobile nav drawer ----------
+  const menuToggle = document.getElementById('menuToggle');
+  const mobileNav = document.getElementById('mobileNav');
+  const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+  const mobileNavClose = document.getElementById('mobileNavClose');
+
+  function openMobileNav(){
+    menuToggle.classList.add('active');
+    mobileNav.classList.add('open');
+    mobileNavOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMobileNav(){
+    menuToggle.classList.remove('active');
+    mobileNav.classList.remove('open');
+    mobileNavOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  menuToggle.addEventListener('click', () => {
+    mobileNav.classList.contains('open') ? closeMobileNav() : openMobileNav();
+  });
+  mobileNavClose.addEventListener('click', closeMobileNav);
+  mobileNavOverlay.addEventListener('click', closeMobileNav);
+  document.querySelectorAll('.mnav-link').forEach(a => a.addEventListener('click', closeMobileNav));
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeMobileNav(); });
+
+  document.getElementById('mnavAccount').addEventListener('click', () => { closeMobileNav(); openModal('login'); });
+  document.getElementById('mnavWallet').addEventListener('click', () => { closeMobileNav(); openWallet(); });
+
+  // ---------- toast helper ----------
+  const toastEl = document.getElementById('toast');
+  let toastTimer;
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3200);
+  }
+
+  // ---------- wallet state ----------
+  const WALLET_KEY = 'dazelWallet';
+  function todayStr(){
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function daysBetween(a, b){
+    const d1 = new Date(a), d2 = new Date(b);
+    return Math.round((d2 - d1) / 86400000);
+  }
+  function loadWallet(){
+    let w;
+    try{ w = JSON.parse(localStorage.getItem(WALLET_KEY)); }catch(e){ w = null; }
+    if(!w) w = { coins: 0, streak: 0, lastSpinDate: null };
+    return w;
+  }
+  function saveWallet(w){ localStorage.setItem(WALLET_KEY, JSON.stringify(w)); }
+  let wallet = loadWallet();
+
+  const coinCountEl = document.getElementById('coinCount');
+  const walletBalanceEl = document.getElementById('walletBalance');
+  const streakCountEl = document.getElementById('streakCount');
+  const redeemFillEl = document.getElementById('redeemFill');
+  const redeemTextEl = document.getElementById('redeemText');
+  const redeemBtnEl = document.getElementById('redeemBtn');
+  const spinBtnEl = document.getElementById('spinBtn');
+  const spinStatusEl = document.getElementById('spinStatus');
+
+  function renderWallet(bump){
+    coinCountEl.textContent = wallet.coins;
+    walletBalanceEl.textContent = wallet.coins;
+    streakCountEl.textContent = wallet.streak;
+    const pct = Math.min(100, (wallet.coins / 1000) * 100);
+    redeemFillEl.style.width = pct + '%';
+    redeemTextEl.textContent = wallet.coins + ' / 1000 coins';
+    redeemBtnEl.disabled = wallet.coins < 1000;
+    if(bump){
+      [coinCountEl, walletBalanceEl].forEach(el => {
+        el.classList.remove('coin-bump');
+        void el.offsetWidth;
+        el.classList.add('coin-bump');
+      });
+    }
+    const today = todayStr();
+    if(wallet.lastSpinDate === today){
+      spinBtnEl.disabled = true;
+      spinBtnEl.textContent = 'Come Back Tomorrow';
+      spinStatusEl.textContent = "You've claimed today's spin. See you tomorrow for another chance!";
+      spinStatusEl.classList.remove('ready');
+    } else {
+      spinBtnEl.disabled = false;
+      spinBtnEl.textContent = 'Spin Now';
+      spinStatusEl.textContent = 'Spin once a day to grow your streak and win coins!';
+      spinStatusEl.classList.add('ready');
+    }
+  }
+
+  // ---------- spin wheel ----------
+  // segments: label, coin value, relative weight (higher = more common)
+  const segments = [
+    { label:'Better Luck', value:0,   weight:20, color:'#5C1330', text:'#F3E1E1' },
+    { label:'10',          value:10,  weight:18, color:'#C9A24B', text:'#3A0F1E' },
+    { label:'20',          value:20,  weight:15, color:'#5C1330', text:'#F3E1E1' },
+    { label:'30',          value:30,  weight:12, color:'#C9A24B', text:'#3A0F1E' },
+    { label:'40',          value:40,  weight:10, color:'#5C1330', text:'#F3E1E1' },
+    { label:'50',          value:50,  weight:8,  color:'#C9A24B', text:'#3A0F1E' },
+    { label:'55',          value:55,  weight:7,  color:'#5C1330', text:'#F3E1E1' },
+    { label:'60',          value:60,  weight:5,  color:'#C9A24B', text:'#3A0F1E' },
+    { label:'70',          value:70,  weight:3,  color:'#5C1330', text:'#F3E1E1' },
+    { label:'100',         value:100, weight:2,  color:'#C9A24B', text:'#3A0F1E' }
+  ];
+  const segCount = segments.length;
+  const segAngle = 360 / segCount;
+
+  const wheelEl = document.getElementById('wheel');
+  function buildWheel(){
+    const stops = segments.map((s,i) => `${s.color} ${i*segAngle}deg ${(i+1)*segAngle}deg`).join(', ');
+    wheelEl.style.background = `conic-gradient(${stops})`;
+    // wheel-wrap is 230px, so radius here is measured from the wheel's own
+    // center. Each .wheel-seg-label wrapper is pinned to that center
+    // (top:50%; left:50%; width:0; height:0), so the inner span only needs
+    // its offset FROM the center, not an absolute top-left coordinate.
+    const r = 76;
+    segments.forEach((s,i) => {
+      const mid = i*segAngle + segAngle/2;
+      const rad = (mid - 90) * Math.PI/180;
+      const x = r*Math.cos(rad);
+      const y = r*Math.sin(rad);
+      const label = document.createElement('div');
+      label.className = 'wheel-seg-label';
+      const span = document.createElement('span');
+      span.textContent = s.label;
+      // keep radial labels right-side-up: flip the lower half 180° so text
+      // never renders upside down, without moving its (x, y) anchor point.
+      const rotateDeg = (mid > 90 && mid < 270) ? mid + 180 : mid;
+      span.style.left = x + 'px';
+      span.style.top = y + 'px';
+      span.style.color = s.text;
+      span.style.transform = `translate(-50%,-50%) rotate(${rotateDeg}deg)`;
+      label.appendChild(span);
+      wheelEl.appendChild(label);
+    });
+  }
+  buildWheel();
+
+  function weightedPick(){
+    const total = segments.reduce((sum,s) => sum + s.weight, 0);
+    let r = Math.random() * total;
+    for(let i=0;i<segments.length;i++){
+      r -= segments[i].weight;
+      if(r <= 0) return i;
+    }
+    return segments.length - 1;
+  }
+
+  let currentRotation = 0;
+  let spinning = false;
+  spinBtnEl.addEventListener('click', () => {
+    if(spinning || spinBtnEl.disabled) return;
+    spinning = true;
+    spinBtnEl.disabled = true;
+    const idx = weightedPick();
+    const seg = segments[idx];
+    const targetMid = idx*segAngle + segAngle/2;
+    // pointer is fixed at top (0deg). We rotate the wheel so the chosen segment lands under it.
+    const fullSpins = 5 + Math.floor(Math.random()*2);
+    const finalAngle = fullSpins*360 + (360 - targetMid) + (Math.random()*segAngle*0.5 - segAngle*0.25);
+    currentRotation += finalAngle;
+    wheelEl.style.transform = `rotate(${currentRotation}deg)`;
+
+    setTimeout(() => {
+      spinning = false;
+      const today = todayStr();
+      if(wallet.lastSpinDate){
+        const gap = daysBetween(wallet.lastSpinDate, today);
+        wallet.streak = gap === 1 ? wallet.streak + 1 : (gap === 0 ? wallet.streak : 1);
+      } else {
+        wallet.streak = 1;
+      }
+      wallet.lastSpinDate = today;
+      if(seg.value > 0){
+        wallet.coins += seg.value;
+        showToast(`🎉 You won ${seg.value} coins! Wallet updated.`);
+      } else {
+        showToast('😔 Better luck next time — come back tomorrow!');
+      }
+      saveWallet(wallet);
+      renderWallet(true);
+    }, 4300);
+  });
+
+  // ---------- redeem ----------
+  function generateCode(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for(let i=0;i<5;i++) code += chars[Math.floor(Math.random()*chars.length)];
+    return `DAZEL100-${code}`;
+  }
+  redeemBtnEl.addEventListener('click', () => {
+    if(wallet.coins < 1000) return;
+    wallet.coins -= 1000;
+    saveWallet(wallet);
+    renderWallet(true);
+    const code = generateCode();
+    const redeemCodeBox = document.getElementById('redeemCode');
+    document.getElementById('redeemCodeText').textContent = code;
+    redeemCodeBox.style.display = 'inline-flex';
+    showToast('✨ ₹100 OFF coupon unlocked!');
+  });
+  attachRipple(redeemBtnEl);
+  attachRipple(spinBtnEl);
+  document.getElementById('copyCodeBtn').addEventListener('click', () => {
+    const code = document.getElementById('redeemCodeText').textContent;
+    navigator.clipboard && navigator.clipboard.writeText(code).then(() => showToast('Code copied to clipboard!'));
+  });
+
+  // ---------- wallet modal open/close ----------
+  const walletOverlay = document.getElementById('walletOverlay');
+  function openWallet(){
+    walletOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    renderWallet(false);
+  }
+  function closeWallet(){
+    walletOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('walletBtn').addEventListener('click', openWallet);
+  document.getElementById('walletClose').addEventListener('click', closeWallet);
+  walletOverlay.addEventListener('click', (e) => { if(e.target === walletOverlay) closeWallet(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeWallet(); });
+
+  renderWallet(false);
+</script>
+
+</body>
+</html>
