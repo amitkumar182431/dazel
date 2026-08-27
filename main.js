@@ -327,9 +327,9 @@
 
   function money(n){ return '₹' + Number(n).toLocaleString('en-IN'); }
 
-  function productCardHTML(p, isExtra){
+  function productCardHTML(p){
     return `
-    <div class="card${isExtra ? ' hidden-extra' : ''}" data-id="${p.id}">
+    <div class="card" data-id="${p.id}">
       <div class="thumb">
         <span class="badge">${p.badge}</span>
         <div class="wish" data-wish="${p.id}" title="Add to wishlist" role="button" tabindex="0">${heartIcon}</div>
@@ -346,17 +346,21 @@
     </div>`;
   }
 
-  function renderCategorySection(gridId, category, visibleCount){
+  function renderCategorySection(gridId, category){
     const grid = document.getElementById(gridId);
     if(!grid) return;
     const items = DAZEL_PRODUCTS.filter(p => p.cat === category);
-    grid.innerHTML = items.map((p,i) => productCardHTML(p, i >= visibleCount)).join('');
+    // All cards render; how many are visible by default is controlled
+    // entirely by CSS (nth-child rules that adapt per breakpoint —
+    // see "progressive disclosure" in style.css). This keeps the
+    // visible count correct even if the window is resized after load.
+    grid.innerHTML = items.map(p => productCardHTML(p)).join('');
   }
 
-  renderCategorySection('grid-giftboxes', 'giftboxes', 8);
-  renderCategorySection('grid-jaipuri', 'jaipuri', 8);
-  renderCategorySection('grid-earrings', 'earrings', 8);
-  renderCategorySection('grid-bracelets', 'bracelets', 8);
+  renderCategorySection('grid-giftboxes', 'giftboxes');
+  renderCategorySection('grid-jaipuri', 'jaipuri');
+  renderCategorySection('grid-earrings', 'earrings');
+  renderCategorySection('grid-bracelets', 'bracelets');
 
   // product count pills
   document.querySelectorAll('[data-count-for]').forEach(el => {
