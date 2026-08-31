@@ -1257,17 +1257,221 @@
     }, 2900);
   }
 
-  cartCheckoutBtn.addEventListener('click', async () => {
-    if(cart.length === 0) return;
-    const cartSnapshot = [...cart];
-    cartCheckoutBtn.disabled = true;
+  // =========================================================
+  // PAYMENT GATEWAY — Intercept checkout & show method selector
+  // =========================================================
+  const paymentGatewayOverlay = document.getElementById('paymentGatewayOverlay');
+  const paymentGwClose        = document.getElementById('paymentGwClose');
+  const pmtDisplayAmount      = document.getElementById('pmtDisplayAmount');
+  const pmtTabs               = document.querySelectorAll('.pmt-tab');
+  const pmtPanelCard          = document.getElementById('pmtPanelCard');
+  const pmtPanelUpi           = document.getElementById('pmtPanelUpi');
+  const pmtPanelCod           = document.getElementById('pmtPanelCod');
+
+  // Card form elements
+  const cardNumberInput = document.getElementById('cardNumberInput');
+  const cardNameInput   = document.getElementById('cardNameInput');
+  const cardExpiryInput = document.getElementById('cardExpiryInput');
+  const cardCvvInput    = document.getElementById('cardCvvInput');
+  const cardPayBtn      = document.getElementById('cardPayBtn');
+  const cardProcessingAnim = document.getElementById('cardProcessingAnim');
+  const cardProcMsg     = document.getElementById('cardProcMsg');
+
+  // 3D Card preview elements
+  const previewCard3d   = document.getElementById('previewCard3d');
+  const pc3dNumber      = document.getElementById('pc3dNumber');
+  const pc3dName        = document.getElementById('pc3dName');
+  const pc3dExpiry      = document.getElementById('pc3dExpiry');
+  const pc3dCvvPreview  = document.getElementById('pc3dCvvPreview');
+
+  // UPI elements
+  const upiPayBtn          = document.getElementById('upiPayBtn');
+  const upiIdInput         = document.getElementById('upiIdInput');
+  const upiScreenAmt       = document.getElementById('upiScreenAmt');
+  const upiProcessingAnim  = document.getElementById('upiProcessingAnim');
+  const upiProcMsg         = document.getElementById('upiProcMsg');
+
+  // COD
+  const codPayBtn = document.getElementById('codPayBtn');
+
+  let pendingCartSnapshot = [];
+  let pendingOrderTotal = 0;
+
+  function openPaymentGateway(cartSnapshot, total){
+    pendingCartSnapshot = cartSnapshot;
+    pendingOrderTotal   = total;
+    if(pmtDisplayAmount) pmtDisplayAmount.textContent = money(total);
+    if(upiScreenAmt) upiScreenAmt.textContent = money(total);
+    // Reset card form
+    if(cardNumberInput) cardNumberInput.value = '';
+    if(cardNameInput) cardNameInput.value = '';
+    if(cardExpiryInput) cardExpiryInput.value = '';
+    if(cardCvvInput) cardCvvInput.value = '';
+    if(pc3dNumber) pc3dNumber.textContent = '•••• •••• •••• ••••';
+    if(pc3dName) pc3dName.textContent = 'YOUR NAME';
+    if(pc3dExpiry) pc3dExpiry.textContent = 'MM/YY';
+    if(pc3dCvvPreview) pc3dCvvPreview.textContent = '•••';
+    if(previewCard3d) previewCard3d.classList.remove('flipped');
+    if(cardProcessingAnim) cardProcessingAnim.style.display = 'none';
+    if(cardPayBtn) cardPayBtn.style.display = 'flex';
+    if(upiProcessingAnim) upiProcessingAnim.style.display = 'none';
+    if(upiPayBtn) upiPayBtn.style.display = 'flex';
+    // Switch to Card tab by default
+    switchPmtTab('card');
+    paymentGatewayOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePaymentGateway(){
+    paymentGatewayOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function switchPmtTab(method){
+    pmtTabs.forEach(t => t.classList.toggle('active', t.dataset.pmt === method));
+    pmtPanelCard.classList.toggle('active', method === 'card');
+    pmtPanelUpi.classList.toggle('active', method === 'upi');
+    pmtPanelCod.classList.toggle('active', method === 'cod');
+  }
+
+  // Tab clicks
+  pmtTabs.forEach(tab => {
+    tab.addEventListener('click', () => switchPmtTab(tab.dataset.pmt));
+  });
+
+  // Close
+  if(paymentGwClose) paymentGwClose.addEventListener('click', closePaymentGateway);
+  paymentGatewayOverlay.addEventListener('click', e => { if(e.target === paymentGatewayOverlay) closePaymentGateway(); });
+
+  // ============================================================
+  // LIVE 3D CARD ANIMATION — mirrors form input in real time
+  // ============================================================
+  function formatCardDisplay(val){
+    const digits = val.replace(/\D/g, '').slice(0, 16);
+    const groups = [];
+    for(let i = 0; i < 16; i += 4) groups.push(digits.slice(i, i+4) || '');
+    return groups.map(g => g.padEnd(4, '•')).join(' ');
+  }
+
+  if(cardNumberInput){
+    cardNumberInput.addEventListener('input', function(){
+      // Auto-format spaces
+      const digits = this.value.replace(/\D/g, '').slice(0, 16);
+      this.value = digits.replace(/(.{4})/g, '$1 ').trim();
+      if(pc3dNumber) pc3dNumber.textContent = formatCardDisplay(digits);
+    });
+  }
+  if(cardNameInput){
+    cardNameInput.addEventListener('input', function(){
+      if(pc3dName) pc3dName.textContent = this.value.toUpperCase() || 'YOUR NAME';
+    });
+  }
+  if(cardExpiryInput){
+    cardExpiryInput.addEventListener('input', function(){
+      let val = this.value.replace(/\D/g, '').slice(0, 4);
+      if(val.length >= 3) val = val.slice(0,2) + '/' + val.slice(2);
+      this.value = val;
+      if(pc3dExpiry) pc3dExpiry.textContent = val || 'MM/YY';
+    });
+  }
+  // CVV — flip card to back on focus, restore on blur
+  if(cardCvvInput){
+    cardCvvInput.addEventListener('focus', () => { if(previewCard3d) previewCard3d.classList.add('flipped'); });
+    cardCvvInput.addEventListener('blur',  () => { if(previewCard3d) previewCard3d.classList.remove('flipped'); });
+    cardCvvInput.addEventListener('input', function(){
+      const val = this.value.replace(/\D/g, '').slice(0, 4);
+      this.value = val;
+      if(pc3dCvvPreview) pc3dCvvPreview.textContent = val ? '•'.repeat(val.length) : '•••';
+    });
+  }
+
+  // ============================================================
+  // CARD PAY — processing outline animation → success
+  // ============================================================
+  function runCardProcessing(afterSuccess){
+    if(cardProcessingAnim) cardProcessingAnim.style.display = 'block';
+    if(cardPayBtn) cardPayBtn.style.display = 'none';
+    const msgs = ['Encrypting card data…', 'Connecting to payment network…', 'Authorizing transaction…', 'Payment successful ✓'];
+    let idx = 0;
+    const msgTimer = setInterval(() => {
+      idx++;
+      if(idx < msgs.length && cardProcMsg) cardProcMsg.textContent = msgs[idx];
+      if(idx >= msgs.length - 1){
+        clearInterval(msgTimer);
+        setTimeout(() => {
+          if(cardProcessingAnim) cardProcessingAnim.style.display = 'none';
+          afterSuccess('Card');
+        }, 700);
+      }
+    }, 900);
+  }
+
+  if(cardPayBtn){
+    cardPayBtn.addEventListener('click', () => {
+      const num = (cardNumberInput ? cardNumberInput.value.replace(/\s/g,'') : '');
+      if(num.length < 16){
+        showToast('⚠ Please enter a valid 16-digit card number');
+        return;
+      }
+      if(cardNameInput && !cardNameInput.value.trim()){
+        showToast('⚠ Please enter the cardholder name');
+        return;
+      }
+      runCardProcessing(finishPayment);
+    });
+  }
+
+  // ============================================================
+  // UPI PAY — ripple animation → success
+  // ============================================================
+  function runUpiProcessing(afterSuccess){
+    if(upiProcessingAnim) upiProcessingAnim.style.display = 'flex';
+    if(upiPayBtn) upiPayBtn.style.display = 'none';
+    const msgs = ['Sending payment request…', 'Waiting for UPI confirmation…', 'Payment received ✓'];
+    let idx = 0;
+    const t = setInterval(() => {
+      idx++;
+      if(idx < msgs.length && upiProcMsg) upiProcMsg.textContent = msgs[idx];
+      if(idx >= msgs.length - 1){
+        clearInterval(t);
+        setTimeout(() => {
+          if(upiProcessingAnim) upiProcessingAnim.style.display = 'none';
+          afterSuccess('UPI');
+        }, 700);
+      }
+    }, 1200);
+  }
+
+  if(upiPayBtn){
+    upiPayBtn.addEventListener('click', () => {
+      const id = upiIdInput ? upiIdInput.value.trim() : '';
+      if(!id.includes('@')){
+        showToast('⚠ Please enter a valid UPI ID (e.g. name@upi)');
+        return;
+      }
+      runUpiProcessing(finishPayment);
+    });
+  }
+
+  // ============================================================
+  // COD PAY — instant confirm
+  // ============================================================
+  if(codPayBtn){
+    codPayBtn.addEventListener('click', () => finishPayment('Cash on Delivery'));
+  }
+
+  // ============================================================
+  // FINISH PAYMENT — close gateway, place order, fire printer
+  // ============================================================
+  async function finishPayment(methodName){
+    closePaymentGateway();
+    const cartSnapshot = pendingCartSnapshot;
 
     let orderData = null;
     try {
-      const result = await apiRequest('/orders', { method:'POST', body:JSON.stringify({ items:cartSnapshot }) });
+      const result = await apiRequest('/orders', { method:'POST', body:JSON.stringify({ items:cartSnapshot, method: methodName }) });
       orderData = result.order;
     } catch(error) {
-      // Fallback calculation for offline / static environment
       const calculatedTotal = cartSnapshot.reduce((sum, item) => {
         const p = findProduct(item.id);
         return sum + (p ? p.price * item.qty : 0);
@@ -1275,7 +1479,8 @@
       orderData = {
         id: 'DZL' + Math.floor(100000 + Math.random() * 900000),
         total: calculatedTotal,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        paymentMethod: methodName
       };
     }
 
@@ -1295,8 +1500,23 @@
     // Launch POS Thermal Printer modal & start printing animation
     checkoutOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
+    showToast(`✦ Payment via ${methodName} Confirmed!`);
     startReceiptPrintingAnimation(orderData, cartSnapshot);
+  }
+
+  // Override the original cartCheckoutBtn handler to open Payment Gateway
+  cartCheckoutBtn.addEventListener('click', async () => {
+    if(cart.length === 0) return;
+    const cartSnapshot = [...cart];
+    const total = cartSnapshot.reduce((sum, item) => {
+      const p = findProduct(item.id);
+      return sum + (p ? p.price * item.qty : 0);
+    }, 0);
+    closeCart();
+    openPaymentGateway(cartSnapshot, total);
   });
+
+
 
   // Printer hardware FEED button interaction
   if(posFeedBtn){
