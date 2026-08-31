@@ -1,0 +1,27 @@
+{
+  "users": [
+    {
+      "id": "usr_6faa44bc-b63c-40e1-b422-3568a8123c52",
+      "name": "API Tester",
+      "email": "test-1787815008010@example.com",
+      "passwordHash": "49b593141257fe4bda431e1fa9fbed4f:3ed57f1384faed834dd42c000dc674083460e7b5e8a2d3468ab03f3c3777cc2f3649fd0707a45fd8eaeb8c52f8a75ec1fedc0ecc84f6638301d0d8068064b418",
+      "createdAt": "2026-08-27T07:16:48.074Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "DZL483107",
+      "userId": "usr_6faa44bc-b63c-40e1-b422-3568a8123c52",
+      "items": [
+        {
+          "id": "ea041",
+          "name": "Temple Bell Jhumka Earrings",
+          "price": 399,
+          "qty": 2
+        }
+      ],
+      "total": 798,
+      "createdAt": "2026-08-27T07:16:48.080Z"
+    }
+  ]
+}
